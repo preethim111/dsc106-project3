@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mouse Temperature Visualization</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .annotation {
+      fill: red;
+      font-weight: bold;
+    }
+
+    .thermometer {
+      stroke: #000;
+      stroke-width: 2px;
+    }
+
+    .temp-bar {
+      fill: red;
+    }
+
+    .slider {
+      margin-top: 30px;
+    }
+
+    .mouse {
+      text-anchor: middle;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <svg width="960" height="600"></svg>
+
+  <!-- Load D3 -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+
+  <!-- Load your script -->
+  <script src="main.js"></script>
+</body>
+</html>
