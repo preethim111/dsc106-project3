@@ -13,7 +13,7 @@ const bgRect = svg.append("rect")
   .attr("x", 0)
   .attr("y", 0)
   .attr("width", width)
-  .attr("height", height)
+  .attr("height", height + 100)
   .attr("fill", "white"); // keep overall background white
 // Margins and plot size
 const margin = { top: 250, right: 50, bottom: 50, left: 50 };
@@ -24,9 +24,11 @@ const plotGroup = svg.append("g")
   .attr("transform", `translate(${margin.left},${margin.top})`);
 
 const xScale = d3.scaleLinear().domain([0, 7]).range([0, plotWidth]);
-const yScale = d3.scaleLinear().domain([35, 40]).range([plotHeight, 0]);
+const yScale = d3.scaleLinear()
+  .domain([35, 40].map(c => (c * 9/5) + 32)) // Convert Celsius range to Fahrenheit
+  .range([plotHeight, 0]);
 
-plotGroup.append("g").call(d3.axisLeft(yScale).tickFormat(d => d + "°C"));
+plotGroup.append("g").call(d3.axisLeft(yScale).tickFormat(d => d + "°F"));
 plotGroup.append("g")
   .attr("transform", `translate(0,${plotHeight})`)
   .call(d3.axisBottom(xScale)
@@ -38,7 +40,7 @@ const lineFemale = plotGroup.append("path")
   .attr("fill", "none");
 
 const lineMale = plotGroup.append("path")
-  .attr("stroke", "blue")
+  .attr("stroke", "#00BFFF") // bright sky blue
   .attr("fill", "none");
 
 // Vertical line in the plot that follows the slider
@@ -73,7 +75,7 @@ legend.append("rect")
   .attr("y", 25)
   .attr("width", 15)
   .attr("height", 15)
-  .attr("fill", "blue");
+  .attr("fill", "#00BFFF");
 
 legend.append("text")
   .attr("x", 20)
@@ -82,7 +84,7 @@ legend.append("text")
   .text("Male");
 
 // Slider setup
-const sliderY = height - 50;
+const sliderY = height - 80;
 const slider = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${sliderY})`);
 
@@ -129,10 +131,23 @@ slider.selectAll(".slider-tick-label")
   .attr("font-weight", "bold")
   .attr("fill", "#333")
   .text(d => {
-    if (d === 0) return "0";
-    if (d % 24 === 0) return `${d / 24} days`;
+    if (d === 0) return "0 hrs";
+    if (d % 24 === 0) return `${d} hrs`;
     return `${d} hrs`;
   });
+
+// Add day labels on a separate line
+slider.selectAll(".slider-day-label")
+  .data(tickHours.filter(d => d % 24 === 0))
+  .enter()
+  .append("text")
+  .attr("class", "slider-day-label")
+  .attr("x", d => sliderScale(d))
+  .attr("y", 55)
+  .attr("text-anchor", "middle")
+  .attr("font-size", "12px")
+  .attr("fill", "#666")
+  .text(d => `(Day ${d / 24})`);
 
 slider.append("line")
   .attr("x1", 0)
@@ -153,8 +168,8 @@ const handle = slider.append("circle")
   .attr("filter", "drop-shadow(0px 2px 6px #aaa)");
 
 const mouseData = [
-  { x: 200, label: "Female", color: "#ff1493" }, // hot pink
-  { x: 750, label: "Male", color: "lightblue" }
+  { x: 210, label: "Female", color: "#ff1493" }, // hot pink
+  { x: 700, label: "Male", color: "#00BFFF" } // bright sky blue
 ];
 
 mouseData.forEach((mouse, i) => {
@@ -197,7 +212,7 @@ mouseData.forEach((mouse, i) => {
 
   // Thermometer border (move to right of face)
   svg.append("rect")
-    .attr("x", mouse.x + 55)
+    .attr("x", mouse.x + 75)
     .attr("y", 60)
     .attr("width", 20)
     .attr("height", 80)
@@ -209,7 +224,7 @@ mouseData.forEach((mouse, i) => {
 
   // Thermometer fill (to be updated dynamically)
   mouse.tempBar = svg.append("rect")
-    .attr("x", mouse.x + 56)
+    .attr("x", mouse.x + 76)
     .attr("y", 140)
     .attr("width", 18)
     .attr("height", 0)
@@ -217,12 +232,21 @@ mouseData.forEach((mouse, i) => {
 
   // Temperature label (above thermometer)
   mouse.tempLabel = svg.append("text")
-    .attr("x", mouse.x + 65)
+    .attr("x", mouse.x + 85)
     .attr("y", 55)
     .attr("text-anchor", "middle")
     .attr("font-size", "14px")
     .attr("fill", "#333")
     .text("0°C");
+
+  // Red circle at the bottom of the thermometer
+  svg.append("circle")
+    .attr("cx", mouse.x + 85)
+    .attr("cy", 140)
+    .attr("r", 16)
+    .attr("fill", "#e63946") // Lighter red
+    .attr("stroke", "#888")
+    .attr("stroke-width", 1);
 });
 
 const compareText = svg.append("text")
@@ -234,7 +258,7 @@ const compareText = svg.append("text")
   .text("On average, female mice are ___ °C hotter/colder!");
 
 const annotation = svg.append("g")
-  .attr("transform", "translate(400, 160)")
+  .attr("transform", "translate(400, 120)")
   .style("display", "none");
 annotation.append("rect")
   .attr("width", 170)
@@ -279,7 +303,7 @@ Promise.all([
 
   const line = d3.line()
     .x(d => xScale(d.hour / 24))
-    .y(d => yScale(d.temp));
+    .y(d => yScale((d.temp * 9/5) + 32)); // Convert Celsius to Fahrenheit for plotting
 
   lineFemale.attr("d", line(femHourly)).attr("stroke-width", 4);
   lineMale.attr("d", line(maleHourly)).attr("stroke-width", 4);
@@ -288,22 +312,27 @@ Promise.all([
     const femTemp = femHourly[hour].temp;
     const maleTemp = maleHourly[hour].temp;
 
+    // Convert Celsius to Fahrenheit
+    const femTempF = (femTemp * 9 / 5) + 32;
+    const maleTempF = (maleTemp * 9 / 5) + 32;
+
     mouseData[0].tempBar
-      .attr("y", 140 + 80 - (femTemp - 35) * 16)
+      .attr("y", 140 - (femTemp - 35) * 16)
       .attr("height", (femTemp - 35) * 16);
-    mouseData[0].tempLabel.text(femTemp.toFixed(1) + "°C");
+    mouseData[0].tempLabel.text(femTempF.toFixed(1) + "°F");
 
     mouseData[1].tempBar
-      .attr("y", 140 + 80 - (maleTemp - 35) * 16)
+      .attr("y", 140 - (maleTemp - 35) * 16)
       .attr("height", (maleTemp - 35) * 16);
-    mouseData[1].tempLabel.text(maleTemp.toFixed(1) + "°C");
+    mouseData[1].tempLabel.text(maleTempF.toFixed(1) + "°F");
 
     const diff = femTemp - maleTemp;
+    const diffF = (diff * 9 / 5);
     compareText.text(
-      `On average, female mice are ${diff >= 0 ? "+" : ""}${diff.toFixed(1)}°C ${diff >= 0 ? "hotter" : "colder"}!`
+      `On average, female mice are ${diffF >= 0 ? "+" : ""}${diffF.toFixed(1)}°F ${diffF >= 0 ? "hotter" : "colder"}!`
     );
 
-    const isDay = (hour % 24) < 12;
+    const isDay = (hour % 24) >= 12;
     sliderOval.attr("fill", isDay ? sliderOvalDay : sliderOvalNight);
     sliderOval.attr("stroke", isDay ? "#e1c340" : "#1b2a4a");
 
@@ -328,3 +357,66 @@ Promise.all([
   handle.call(drag);
   update(0);
 });
+
+// Add context and conclusion panels
+const contextSvg = d3.select(".context-viz svg");
+const conclusionSvg = d3.select(".conclusion-viz svg");
+
+// Context Panel
+const contextGroup = contextSvg.append("g")
+  .attr("transform", "translate(20, 20)");
+
+// Title
+contextGroup.append("text")
+  .attr("x", 0)
+  .attr("y", 0)
+  .attr("font-size", "18px")
+  .attr("font-weight", "bold")
+  .text("Context");
+
+// Context Information
+contextGroup.append("text")
+  .attr("x", 0)
+  .attr("y", 40)
+  .attr("font-size", "14px")
+  .text("Mice are more active at night")
+  .attr("dy", "1.2em")
+  .text("(lights off)")
+  .attr("dy", "1.2em")
+  .text("The baseline temperature is")
+  .attr("dy", "1.2em")
+  .text("99.5°F, which is similar to")
+  .attr("dy", "1.2em")
+  .text("humans.")
+  .attr("dy", "1.2em")
+  .text("This can vary based on")
+  .attr("dy", "1.2em")
+  .text("activity and estrus.");
+
+// Conclusion Panel
+const conclusionGroup = conclusionSvg.append("g")
+  .attr("transform", "translate(20, 20)");
+
+// Title
+conclusionGroup.append("text")
+  .attr("x", 0)
+  .attr("y", 0)
+  .attr("font-size", "18px")
+  .attr("font-weight", "bold")
+  .text("Key Findings");
+
+// Key Finding
+conclusionGroup.append("text")
+  .attr("x", 0)
+  .attr("y", 40)
+  .attr("font-size", "14px")
+  .text("Female body temperature")
+  .attr("dy", "1.2em")
+  .text("surpasses male temperature")
+  .attr("dy", "1.2em")
+  .text("by over 2°F during estrus,")
+  .attr("dy", "1.2em")
+  .text("a spike not seen on")
+  .attr("dy", "1.2em")
+  .text("regular days.");
+

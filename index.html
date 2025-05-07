@@ -41,15 +41,64 @@
       box-shadow: 0 4px 24px 0 #d0d0d0;
       border: 1px solid #e0e0e0;
     }
+
+    .container {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .main-viz {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .context-viz, .conclusion-viz {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .legend-image {
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
-  <svg width="960" height="600"></svg>
+  <h1>Are female mice body temperatures generally higher than male mice body temperatures?</h1>
+  <div class="container">
+    <div class="main-viz">
+      <svg width="1000" height="650"></svg>
+    </div>
+    <div class="side-panels">
+      <div class="context-viz">
+        <h3>Context</h3>
+        <p>Mice are more active at night (lights off)</p>
+        <p>The baseline temperature for is 99.5°F, which is similar to humans.</p>
+        <p>This can vary based on activity and estrus.</p>
+
+        <h3>Conclusion</h3>
+        <p>Female body temperature surpasses male temperature by over 2°F during estrus, a spike not seen on regular days.</p>
+        <p>Regardless of the time of day or estrus cycle, the female average body temperature is always above the male average body temperature.</p>
+        <p>Female and male mice are hotter when the lights are off (night), likely due to increased activity.</p>
+        <!-- <svg width="300" height="400"></svg> -->
+      </div>
+      <div class="conclusion-viz">
+        <!-- <svg width="300" height="400"></svg> -->
+      </div>
+      <img src="legend.png" alt="Legend" class="legend-image" width="200">
+    </div>
+  </div>
 
   <!-- Load D3 -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
 
   <!-- Load your script -->
   <script src="main.js"></script>
+
+  <p> PLACEHOLDER FOR WRITEUP</p>
 </body>
 </html>
