@@ -28,6 +28,43 @@ const yScale = d3.scaleLinear()
   .domain([35, 40].map(c => (c * 9/5) + 32)) // Convert Celsius range to Fahrenheit
   .range([plotHeight, 0]);
 
+// Add baseline temperature line at 99.5°F
+plotGroup.append("line")
+  .attr("x1", 0)
+  .attr("x2", plotWidth)
+  .attr("y1", yScale(99.5))
+  .attr("y2", yScale(99.5))
+  .attr("stroke", "black")
+  .attr("stroke-width", 1)
+  .attr("stroke-dasharray", "4,4") // Creates dotted line pattern
+  .attr("opacity", 0.2);
+
+// Add label for baseline temperature
+plotGroup.append("text")
+  .attr("x", plotWidth)
+  .attr("y", yScale(99.5) - 5)
+  .attr("text-anchor", "end")
+  .attr("font-size", "12px")
+  .attr("fill", "black")
+  .text("99.5°F Baseline");
+
+// Add Y-axis label
+plotGroup.append("text")
+  .attr("transform", "rotate(-90)")
+  .attr("y", -40)
+  .attr("x", -(plotHeight / 2))
+  .attr("text-anchor", "middle")
+  .attr("font-size", "14px")
+  .text("Mice Body Temperature (Fahrenheit)");
+
+// Add X-axis label
+plotGroup.append("text")
+  .attr("x", plotWidth / 2)
+  .attr("y", plotHeight + 40)
+  .attr("text-anchor", "middle")
+  .attr("font-size", "14px")
+  .text("Time Elapsed");
+
 plotGroup.append("g").call(d3.axisLeft(yScale).tickFormat(d => d + "°F"));
 plotGroup.append("g")
   .attr("transform", `translate(0,${plotHeight})`)
