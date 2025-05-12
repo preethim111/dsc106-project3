@@ -46,6 +46,7 @@
       display: flex;
       gap: 20px;
       align-items: flex-start;
+      height: 650px;
     }
 
     .main-viz {
@@ -64,6 +65,45 @@
       margin-top: 20px;
       border-radius: 10px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .side-panels {
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .context-viz {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .writeup-section {
+      width: 920px;
+      margin: 0px 0 20px 0;
+      padding: 30px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .writeup-section h1 {
+      color: #333;
+      margin-bottom: 30px;
+      font-size: 28px;
+    }
+
+    .writeup-section p {
+      line-height: 1.8;
+      margin-bottom: 25px;
+      color: #444;
+      font-size: 16px;
     }
   </style>
 </head>
@@ -88,13 +128,30 @@
         <p>Female body temperature surpasses male temperature by over 2°F during estrus, a spike not seen on regular days.</p>
         <p>Regardless of the time of day or estrus cycle, the female average body temperature is always above the male average body temperature.</p>
         <p>Female and male mice are hotter when the lights are off (night), likely due to increased activity.</p>
-        <!-- <svg width="300" height="400"></svg> -->
       </div>
-      <div class="conclusion-viz">
-        <!-- <svg width="300" height="400"></svg> -->
-      </div>
-      
     </div>
+  </div>
+
+  <div class="writeup-section">
+    <h1>Write-Up</h1>
+    <p> 
+      Our visualization was motivated by the goal of understanding body temperature patterns in female mice as a proxy to gain insight into human female anatomy and physiology. Specifically, we wanted to determine whether female mice exhibit higher body temperatures, on average, than male mice. Another reason we chose this dataset was as a result of the guest lecture from class. It sparked an interest in us especially since female health is not researched significantly. To make this comparison intuitive and effective, we made several key design decisions.
+    </p>
+    <p>
+      We used position encoding through a line plot to allow for clear visual comparisons between temperature trends over time. Additionally, we incorporated redundant area encoding using a thermometer chart to provide readable, concrete temperature values. This visual metaphor, a thermometer, was chosen for its familiarity. To enhance interpretability for our audience, we transformed temperature values from Celsius to Fahrenheit, and averaged the data hourly across 13 mice per sex. This aggregation made the visualization easier to interpret by reducing noise that occurred when plotting minute-level data. We included a light gray dotted horizontal line to display the baseline temperature for mice, which can help interpretability of the temperature variations.
+    </p>
+    <p>
+      Another conscious decision we made was to plot both lines representing male and female mice on the same chart for easier comparison. Having two separate charts would have made this a little harder to differentiate between the mice. We also included context, aggregation details, and our conclusions on the right side of the chart to provide the reader with more information.
+    </p>
+    <p>
+      For the color palette, we chose hot pink to represent female mice and blue to represent male mice, aligning with socially familiar color associations. We also used dark blue and yellow to denote lights-off and lights-on periods, respectively, and included a legend to ensure clarity. These colors were selected to convey meaning while making the visualization accessible and context-rich for readers.
+    </p>
+    <p>
+      Regarding the development process, our whole team began by discussing what aspects of the data were most interesting to explore. Three of us (Esther, Mythri, Preethi) worked on making static visualizations to understand more about the data and the kinds of filtering, transformation, and aggregation that we would like to implement. Our other team member (Sathvika) conceptualized the interactive visualization and the key components of it, including the hand drawn mice. We utilized pair-programming strategies when implementing our ideas in D3.JS. We took turns being the "coder," while the other three helped refine our interactivity and design and talk through the code. When finalizing our design we looked to the resources available to us by course staff and referenced the rubric. All four of us contributed to the writeup. 
+    </p>
+    <p>
+      In total, we spent approximately 10 hours as a group developing the application. The most time-consuming aspects were data wrangling and iteratively refining the visual encodings to strike a balance between clarity and detail. It also took a while to really understand the context of the data as well, and how we accurately represent this data in a clear, concise manner.Throughout the process, we emphasized collaboration and open feedback to ensure each part of the project aligned with our central research question.
+    </p>
   </div>
 
   <!-- Load D3 -->
@@ -102,7 +159,5 @@
 
   <!-- Load your script -->
   <script src="main.js"></script>
-
-  <p> PLACEHOLDER FOR WRITEUP</p>
 </body>
 </html>

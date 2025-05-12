@@ -205,37 +205,18 @@ const handle = slider.append("circle")
   .attr("filter", "drop-shadow(0px 2px 6px #aaa)");
 
 const mouseData = [
-  { x: 210, label: "Female", color: "#ff1493" }, // hot pink
-  { x: 700, label: "Male", color: "#00BFFF" } // bright sky blue
+  { x: 210, label: "Female", image: "proj3_female_mice.png" },
+  { x: 700, label: "Male", image: "proj3_male_mice.png" }
 ];
 
 mouseData.forEach((mouse, i) => {
-  // Face
-  svg.append("circle")
-    .attr("cx", mouse.x)
-    .attr("cy", 80)
-    .attr("r", 40)
-    .attr("fill", mouse.color)
-    .attr("stroke", "#888")
-    .attr("stroke-width", 2)
-    .attr("filter", "drop-shadow(0px 2px 6px #aaa)");
-
-  // Ears
-  svg.append("circle")
-    .attr("cx", mouse.x - 30)
-    .attr("cy", 40)
-    .attr("r", 15)
-    .attr("fill", mouse.color)
-    .attr("stroke", "#888")
-    .attr("stroke-width", 1.5);
-
-  svg.append("circle")
-    .attr("cx", mouse.x + 30)
-    .attr("cy", 40)
-    .attr("r", 15)
-    .attr("fill", mouse.color)
-    .attr("stroke", "#888")
-    .attr("stroke-width", 1.5);
+  // Mouse image
+  svg.append("image")
+    .attr("xlink:href", mouse.image)
+    .attr("x", mouse.x - 60) // Center the image (half of new width)
+    .attr("y", 10) // Adjust vertical position
+    .attr("width", 120) // Increased size
+    .attr("height", 120); // Increased size
 
   // Label
   svg.append("text")
